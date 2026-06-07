@@ -3,18 +3,16 @@
   var cleanPath = path;
 
   cleanPath = cleanPath.replace(/^\/www\.cadro\.com(?=\/|$)/, '');
-
-  if (cleanPath === '' || cleanPath === '/index.html' || cleanPath === '/index') {
+  if (cleanPath === '') {
     cleanPath = '/';
-  } else if (cleanPath.endsWith('/index.html')) {
-    cleanPath = cleanPath.slice(0, -11) || '/';
-  } else if (cleanPath.endsWith('.html')) {
-    cleanPath = cleanPath.slice(0, -5);
   }
 
-  cleanPath = cleanPath.replace(/\/+/g, '/');
-  if (!cleanPath.startsWith('/')) {
-    cleanPath = '/' + cleanPath;
+  if (cleanPath === '/index.html' || cleanPath === '/index') {
+    cleanPath = '/';
+  } else if (cleanPath.endsWith('/index.html')) {
+    cleanPath = cleanPath.slice(0, -11);
+  } else if (cleanPath.endsWith('.html')) {
+    cleanPath = cleanPath.slice(0, -5);
   }
 
   if (cleanPath !== path) {
