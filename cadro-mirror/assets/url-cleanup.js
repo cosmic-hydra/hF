@@ -2,11 +2,6 @@
   var path = window.location.pathname;
   var cleanPath = path;
 
-  cleanPath = cleanPath.replace(/^\/www\.cadro\.com(?=\/|$)/, '');
-  if (cleanPath === '') {
-    cleanPath = '/';
-  }
-
   if (cleanPath === '/index.html' || cleanPath === '/index') {
     cleanPath = '/';
   } else if (cleanPath.endsWith('/index.html')) {
