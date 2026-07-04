@@ -1,7 +1,9 @@
-# robots.txt — keep the mirrored CDN artifacts out of crawls and search indexes,
-# and deny AI/LLM scrapers wholesale. Note: this is an advisory layer; the CDN
-# asset URLs are additionally cloaked in-page so a raw wget/scrape never sees
-# them even when a client ignores robots.
+# robots.txt — invite search engines to index the site while keeping the
+# mirrored CDN artifacts out of crawls and search indexes, and denying AI/LLM
+# scrapers wholesale. Note: the CDN asset URLs are additionally cloaked in-page
+# so a raw wget/scrape never sees them even when a client ignores robots.
+
+Sitemap: https://www.hydrafund.ch/sitemap.xml
 
 # --- AI / LLM training & answer crawlers: disallowed entirely ---
 User-agent: GPTBot
@@ -36,7 +38,9 @@ User-agent: PetalBot
 User-agent: Scrapy
 Disallow: /
 
-# --- Everyone else: index the site, but never the mirrored CDN dir or backups ---
+# --- Search engines & everyone else: index the site, but never the mirrored
+#     CDN dir or the editorial backups ---
 User-agent: *
+Allow: /
 Disallow: /_https_/
 Disallow: /*.bak$
