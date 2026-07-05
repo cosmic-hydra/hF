@@ -1,0 +1,297 @@
+/* ==========================================================================
+   hydra fund — enhancement layer  (additive, Webflow-safe, light theme)
+   Motion + micro-interactions layered on the existing mirrored Webflow site.
+   Design language: Swiss-minimal white canvas, near-black ink, brand red
+   (#FF0000). Discipline over flash — no bounce, no overshoot, ≤4px lifts,
+   sub-4% glow. Reveal base-states are gated on html.enh so content is never
+   permanently hidden if JS fails; hover/focus is scoped to .enh-js so it
+   layers cleanly over Webflow's CDN styles without !important.
+   ========================================================================== */
+
+:root {
+  --enh-red: #ff0000;
+  --enh-ink: #0a0a0a;
+  /* easings */
+  --enh-reveal: cubic-bezier(0.22, 1, 0.36, 1);   /* easeOutQuint, no overshoot */
+  --enh-hover: cubic-bezier(0.33, 0, 0.2, 1);      /* asymmetric feel */
+  --enh-draw: cubic-bezier(0.65, 0, 0.35, 1);      /* hand-drawn rule */
+}
+
+/* ==========================================================================
+   1. SCROLL REVEAL  — base state gated on html.enh (JS-set); .enh-in reveals
+   ========================================================================== */
+
+html.enh [data-enh] {
+  opacity: 0;
+  transform: translateY(16px);
+  will-change: opacity, transform;
+  transition:
+    opacity 0.75s var(--enh-reveal) var(--enh-d, 0ms),
+    transform 0.85s var(--enh-reveal) var(--enh-d, 0ms);
+}
+html.enh [data-enh].enh-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* headings settle a touch tighter */
+html.enh .title-h1[data-enh],
+html.enh .title-h2[data-enh],
+html.enh .title-h3[data-enh] {
+  transform: translateY(12px);
+}
+
+/* the "ledger rule": hairline dividers draw in from the left */
+html.enh .enh-rule {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.95s var(--enh-draw) var(--enh-d, 0ms);
+}
+html.enh .enh-rule.enh-in { transform: scaleX(1); }
+
+/* hero headline: whole-line rise out of a mask.
+   padding/margin compensation keeps descenders (p, y, g) from clipping at rest */
+html.enh .enh-hero .enh-line {
+  overflow: hidden;
+  display: block;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+html.enh .enh-hero .enh-line > span {
+  display: block;
+  transform: translateY(115%);
+  transition: transform 0.9s var(--enh-reveal);
+}
+html.enh .enh-hero.enh-in .enh-line > span { transform: none; }
+html.enh .enh-hero.enh-in .enh-line:nth-child(2) > span { transition-delay: 0.09s; }
+html.enh .enh-hero.enh-in .enh-line:nth-child(3) > span { transition-delay: 0.18s; }
+
+/* ==========================================================================
+   2. SCROLL-PROGRESS HAIRLINE  — the one persistent kinetic red
+   ========================================================================== */
+
+.enh-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  z-index: 2000;
+  background: var(--enh-red);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.45);
+}
+
+/* ==========================================================================
+   3. SCROLL-AWARE NAV  — translucent blur backdrop once scrolled
+   ========================================================================== */
+
+.enh-js .navbar {
+  transition: background 0.28s var(--enh-hover), box-shadow 0.28s var(--enh-hover),
+    backdrop-filter 0.28s var(--enh-hover);
+}
+.enh-js .navbar.enh-nav-scrolled {
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: 0 1px 0 rgba(10, 10, 10, 0.07), 0 8px 30px -18px rgba(10, 10, 10, 0.25);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .enh-js .navbar.enh-nav-scrolled { background: rgba(255, 255, 255, 0.97); }
+}
+
+/* ==========================================================================
+   4. HOVER MICRO-INTERACTIONS  (scoped to .enh-js to layer over Webflow)
+   ========================================================================== */
+
+/* -- cards: lift + layered low-alpha shadow (never one fat gray blur) ---- */
+.enh-js .offer-card,
+.enh-js .news-card,
+.enh-js .contact-card,
+.enh-js .team-member-card,
+.enh-js .p-team-card,
+.enh-js .content-with-border {
+  transition: transform 0.38s var(--enh-hover), box-shadow 0.38s var(--enh-hover),
+    border-color 0.3s var(--enh-hover);
+  will-change: transform;
+}
+.enh-js .offer-card:hover,
+.enh-js .news-card:hover,
+.enh-js .team-member-card:hover,
+.enh-js .content-with-border:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.04), 0 18px 44px -12px rgba(10, 10, 10, 0.12);
+}
+.enh-js .contact-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px -20px rgba(10, 10, 10, 0.4);
+}
+
+/* card hero imagery breathes inside its frame */
+.enh-js .offer-card-hero,
+.enh-js .news-card-img,
+.enh-js .team-member-avatar-wrap,
+.enh-js .content-img { overflow: hidden; }
+.enh-js .offer-card-decor,
+.enh-js .news-card-img img,
+.enh-js .team-member-avatar,
+.enh-js .content-img img {
+  transition: transform 0.6s var(--enh-hover);
+  will-change: transform;
+}
+.enh-js .offer-card:hover .offer-card-decor,
+.enh-js .news-card:hover .news-card-img img,
+.enh-js .team-member-card:hover .team-member-avatar,
+.enh-js .content-img:hover img { transform: scale(1.035); }
+
+/* -- cursor-follow glow (JS adds .enh-glow + --gx/--gy) ------------------ */
+.enh-js .enh-glow { position: relative; }
+.enh-js .enh-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    460px circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 0, 0, 0.05),
+    transparent 68%
+  );
+  opacity: 0;
+  transition: opacity 0.3s var(--enh-hover);
+  pointer-events: none;
+  z-index: 0;
+}
+.enh-js .enh-glow:hover::after { opacity: 1; }
+/* dark contact card gets a white glint instead of red */
+.enh-js .contact-card.enh-glow::after {
+  background: radial-gradient(
+    520px circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 255, 255, 0.07),
+    transparent 70%
+  );
+}
+/* keep card content above the glow layer */
+.enh-js .offer-card > *,
+.enh-js .contact-card > *,
+.enh-js .news-card > *,
+.enh-js .work-with-inner > * { position: relative; z-index: 1; }
+
+/* -- nav + footer links: red underline that draws, then exits ----------- */
+.enh-js .nav-link,
+.enh-js .footer-menu-link,
+.enh-js .link-item {
+  position: relative;
+}
+.enh-js .nav-link::after,
+.enh-js .footer-menu-link::after,
+.enh-js .link-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1.5px;
+  background: var(--enh-red);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.26s var(--enh-draw);
+}
+.enh-js .nav-link:hover::after,
+.enh-js .footer-menu-link:hover::after,
+.enh-js .link-item:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+/* current page keeps a short static rule */
+.enh-js .nav-link.w--current::after {
+  transform: scaleX(0.5);
+  transform-origin: left center;
+  opacity: 0.9;
+}
+
+/* -- buttons: arrow leads, body follows (≤1px), never scale ------------- */
+.enh-js .button,
+.enh-js .button-outline,
+.enh-js .w-button {
+  transition: transform 0.2s var(--enh-hover), background-color 0.24s var(--enh-hover),
+    color 0.24s var(--enh-hover), box-shadow 0.24s var(--enh-hover);
+}
+.enh-js .button:hover,
+.enh-js .w-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px -12px rgba(10, 10, 10, 0.5);
+}
+.enh-js .button-outline:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px -14px rgba(10, 10, 10, 0.28);
+}
+.enh-js .span-icon,
+.enh-js .button-icon-wrap,
+.enh-js .text-icon {
+  transition: transform 0.25s var(--enh-hover);
+  display: inline-block;
+}
+.enh-js .button:hover .span-icon,
+.enh-js .button-outline:hover .span-icon,
+.enh-js .link-with-icon:hover .span-icon,
+.enh-js .text-with-icon:hover .span-icon,
+.enh-js .news-card:hover .span-icon { transform: translateX(3px); }
+
+/* work-with items: icon lifts slightly on row hover */
+.enh-js .work-with-inner { transition: transform 0.3s var(--enh-hover); }
+.enh-js .work-with-inner:hover { transform: translateY(-2px); }
+.enh-js .icons-wrap { transition: transform 0.35s var(--enh-hover); }
+.enh-js .work-with-inner:hover .icons-wrap { transform: translateY(-3px) scale(1.04); }
+
+/* -- form fields: focus draws the underline to ink --------------------- */
+.enh-js .field,
+.enh-js .field-wrap .divider {
+  transition: border-color 0.3s var(--enh-hover), background-color 0.3s var(--enh-hover);
+}
+.enh-js .field:focus { border-color: var(--enh-ink); outline: none; }
+.enh-js .field-wrap:focus-within .divider,
+.enh-js .field-wrap:focus-within .divider.is-gray { background-color: var(--enh-ink); }
+
+/* logo mark gives a quarter-turn on hover */
+.enh-js .logo-wrap img,
+.enh-js .footer-logo {
+  transition: transform 0.5s var(--enh-reveal);
+}
+.enh-js .logo-wrap:hover img,
+.enh-js .footer-logo_wrap:hover .footer-logo { transform: rotate(90deg); }
+
+/* ==========================================================================
+   5. FOCUS-VISIBLE  — keyboard users get a clear, on-brand ring
+   ========================================================================== */
+.enh-js a:focus-visible,
+.enh-js button:focus-visible,
+.enh-js .w-button:focus-visible,
+.enh-js input:focus-visible,
+.enh-js .tab-link:focus-visible {
+  outline: 2px solid var(--enh-ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.enh-js .contact-card a:focus-visible,
+.enh-js .contact-card button:focus-visible {
+  outline-color: var(--enh-red);
+}
+
+/* ==========================================================================
+   6. REDUCED MOTION  — everything visible, no transforms
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html.enh [data-enh],
+  html.enh .enh-rule,
+  html.enh .enh-hero .enh-line > span {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .enh-progress { display: none; }
+  .enh-js *,
+  .enh-js *::after,
+  .enh-js *::before { transition-duration: 0.01ms !important; }
+}
