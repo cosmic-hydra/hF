@@ -254,13 +254,15 @@ html.enh .enh-hero.enh-in .enh-line:nth-child(3) > span { transition-delay: 0.18
 .enh-js .field-wrap:focus-within .divider,
 .enh-js .field-wrap:focus-within .divider.is-gray { background-color: var(--enh-ink); }
 
-/* logo mark gives a quarter-turn on hover */
-.enh-js .logo-wrap img,
-.enh-js .footer-logo {
-  transition: transform 0.5s var(--enh-reveal);
+/* font-based wordmark: "hydra" bold, "fund" normal */
+.brand-wordmark {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
 }
-.enh-js .logo-wrap:hover img,
-.enh-js .footer-logo_wrap:hover .footer-logo { transform: rotate(90deg); }
+.brand-wordmark strong { font-weight: 700; }
 
 /* ==========================================================================
    5. FOCUS-VISIBLE  — keyboard users get a clear, on-brand ring
