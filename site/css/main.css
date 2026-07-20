@@ -234,21 +234,12 @@ h1, h2, h3, h4 {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  font-weight: 700;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
   font-size: 1.12rem;
   letter-spacing: -0.02em;
 }
-
-.brand-mark {
-  width: 30px;
-  height: 30px;
-  border-radius: 7px;
-  overflow: hidden;
-  flex: none;
-  transition: transform 0.4s var(--ease-out);
-}
-.brand:hover .brand-mark { transform: rotate(90deg); }
+.brand strong { font-weight: 700; }
 
 .nav-links {
   display: flex;
