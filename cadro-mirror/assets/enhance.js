@@ -268,6 +268,72 @@
     });
   }
 
+  /* ---- 7. entry disclaimer notice --------------------------------------- */
+  // Shown once per browser session on entry to hydrafund.ch: hydra fund is
+  // not a registered fund and holds no financial licences.
+
+  function initDisclaimer() {
+    var KEY = "hf-disclaimer-ack";
+    try {
+      if (sessionStorage.getItem(KEY)) return;
+    } catch (e) { /* storage unavailable — still show the notice */ }
+
+    var overlay = document.createElement("div");
+    overlay.className = "enh-disclaimer-overlay";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-labelledby", "enh-disclaimer-title");
+
+    var panel = document.createElement("div");
+    panel.className = "enh-disclaimer-panel";
+
+    var title = document.createElement("h2");
+    title.id = "enh-disclaimer-title";
+    title.className = "enh-disclaimer-title";
+    title.textContent = "Important Notice";
+
+    var body = document.createElement("div");
+    body.className = "enh-disclaimer-body";
+    body.innerHTML =
+      "<p><strong>hydra fund is not a registered fund</strong> and does not hold any " +
+      "financial licences, authorisations, registrations or rights to function as a fund, " +
+      "manage client money or assets, provide investment advice, or carry out any other " +
+      "regulated financial activity in any jurisdiction. hydra fund is not supervised by " +
+      "the SEC, FINMA, the FCA or any other financial regulator.</p>" +
+      "<p>The .ch domain signifies the Swiss quality and character of the hydra fund brand " +
+      "only; hydra fund is not based in Switzerland. Nothing on this website is an offer, " +
+      "solicitation or investment advice. Your capital is at risk when investing and you may " +
+      "get back less than you invest. Please read our " +
+      '<a href="/legal-and-regulatory.html">Legal &amp; Regulatory</a> disclosures, ' +
+      '<a href="/terms-and-conditions.html">Terms &amp; Conditions</a> and ' +
+      '<a href="/privacy-policy.html">Privacy Policy</a>, and conduct your own checks ' +
+      "before making any decision.</p>";
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "enh-disclaimer-button";
+    btn.textContent = "I understand";
+    btn.addEventListener("click", function () {
+      try { sessionStorage.setItem(KEY, "1"); } catch (e) {}
+      overlay.classList.remove("enh-disclaimer-open");
+      setTimeout(function () {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      }, 350);
+      docEl.classList.remove("enh-disclaimer-lock");
+    });
+
+    panel.appendChild(title);
+    panel.appendChild(body);
+    panel.appendChild(btn);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+    docEl.classList.add("enh-disclaimer-lock");
+    requestAnimationFrame(function () {
+      overlay.classList.add("enh-disclaimer-open");
+      btn.focus();
+    });
+  }
+
   /* ---- failsafe: never leave anything hidden --------------------------- */
 
   function forceRevealAll() {
@@ -285,6 +351,7 @@
     try { initGlow(); } catch (e) {}
     try { initMagnetic(); } catch (e) {}
     try { initSmoothAnchors(); } catch (e) {}
+    try { initDisclaimer(); } catch (e) {}
     setTimeout(forceRevealAll, 3500);
   });
 
